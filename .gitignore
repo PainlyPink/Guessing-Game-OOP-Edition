@@ -1,4 +1,5 @@
 /.venv
 /test.py
 /build
+/dist
 /Guessing Game.spec
