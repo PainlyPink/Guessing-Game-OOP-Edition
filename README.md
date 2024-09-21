@@ -34,9 +34,11 @@ The game generates a random target number within a defined range, and the player
 **Installation**
 ------------
 
-1. Clone the repository: `git clone https://github.com/your-username/guessing-game.git`
+1. Clone the repository: `git clone https://github.com/ElektrikFire/Guessing-Game-OOP-Edition.git`
 2. Install the required library: `pip install blessed`
-3. Run the game: `python main.py`
+3. Run the game:
+	* `python main.py`
+	* Alternatively: `run_python.bat main.py`
 
 **Usage**
 -----

@@ -9,6 +9,7 @@ readLine = input
 
 # Define the range for the target number
 TARGET_RANGE = (1, 9)
+MAX_ATTEMPTS = None
 # Define the exit commands
 EXIT = ("exit", "x")
 # Define the restart commands
@@ -58,7 +59,7 @@ class Game:
         self.targetNumber: int = None
         self.userGuess: int = None
         self.guesses: int = 0
-        self.maxAttempts = len(range(*TARGET_RANGE)) + 1
+        self.maxAttempts = self.AssignMaxAttempts()
         self.main()
 
     def main(self):
@@ -87,6 +88,12 @@ class Game:
                 f"↳ Guess a number between {targetRange} (or enter 'exit' to quit)"
             )
         )
+
+    def AssignMaxAttempts(self) -> int:
+        # Assign the maximum number of guesses based on the target range
+        if MAX_ATTEMPTS:
+            return MAX_ATTEMPTS
+        return len(range(*TARGET_RANGE)) + 1
 
     def GetTargetNumber(self) -> int:
         # Generate a random target number within the defined range
