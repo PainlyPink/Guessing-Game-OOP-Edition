@@ -148,7 +148,7 @@ class Game:
 
     def DeclareVictory(self):
         # Congratulate the user for guessing correctly
-        print("\n🎉 " + term.bold_green("VICTORY! You guessed correctly!!") + " 🎉")
+        print(term.bold_green("\n🎉 VICTORY! You guessed correctly!! 🎉"))
         plural = "" if self.guesses == 1 else "es"
         print(term.green_italic(f"Took {self.guesses} guess{plural}."))
         self.PromptReplay()
