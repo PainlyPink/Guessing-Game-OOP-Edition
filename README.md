@@ -8,7 +8,7 @@
 
 Download the pre-built executable from the `dist` directory and start playing right away!
 
-* [Download Executable](dist/guessing_game.exe)
+* [Download Executable](dist/Guessing%20Game.exe)
 A simple number guessing game written in Python using the Blessed library for terminal manipulation.
 
 **Game Overview**
