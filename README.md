@@ -59,7 +59,7 @@ The game generates a random target number within a defined range, and the player
 **License**
 -------
 
-This project is licensed under the MIT License. See `LICENSE` for details.
+This project is licensed under the MIT License. See [`LICENSE`](https://github.com/ElektrikFire/Guessing-Game-OOP-Edition/blob/main/LICENSE) for details.
 
 **Contributing**
 ------------
