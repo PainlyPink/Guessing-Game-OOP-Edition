@@ -6,9 +6,6 @@ from blessed import Terminal
 # Initialize Terminal object from blessed for terminal manipulations
 _term = Terminal()
 
-# Alias for the built-in input function
-_read_line = input
-
 # Define the range for the target number
 TARGET_RANGE = (1, 9)
 MAX_ATTEMPTS: Optional[int] = None  # Allow for None or int
@@ -22,12 +19,6 @@ RESTART_COMMANDS = ("re", "r")
 def clear_terminal() -> None:
     """Clear the terminal screen."""
     print(_term.clear, end="")
-
-
-# Custom input function that appends a space to the prompt
-def custom_input(prompt: str) -> str:
-    """Prompt the user for input and return their response."""
-    return _read_line(prompt + " ").strip()
 
 
 # Function to check if the guess is a valid number within the target range
@@ -118,8 +109,8 @@ class Game:
     def get_user_guess(self, prefix: str = "") -> str:
         """Prompt the user for a guess and return it."""
         guesses = _term.white(str(self.guesses + 1))
-        user_guess = custom_input(
-            prefix + _term.yellow_bold(f"[{guesses}] Enter your guess:")
+        user_guess = input(
+            prefix + _term.yellow_bold(f"[{guesses}] Enter your guess: ")
         )
         return user_guess
 
@@ -166,7 +157,7 @@ class Game:
 
     def prompt_replay(self, continue_play: bool = False) -> Optional["Game"]:
         """Ask the user if they want to replay the game."""
-        if custom_input(_term.magenta_bold("Replay? (y/n) [y]:")).lower() in ("y", ""):
+        if input(_term.magenta_bold("Replay? (y/n) [y]: ")).lower() in ("y", ""):
             return Game()
         if continue_play:
             self.get_user_guess("\n")
