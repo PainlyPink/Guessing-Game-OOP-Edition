@@ -1,6 +1,10 @@
-from secrets import randbelow
-from typing import Callable, Optional
+"""
+Guessing game module: implements game logic and user interaction.
+"""
 
+from typing import Callable, Optional
+from secrets import randbelow
+import sys
 from blessed import Terminal
 
 # Initialize Terminal object from blessed for terminal manipulations
@@ -28,23 +32,22 @@ def valid_guess(guess: str) -> bool:
         validity = int(guess) in range(TARGET_RANGE[0], TARGET_RANGE[1] + 1)
     except ValueError:
         return False
-    else:
-        return validity
+    return validity
 
 
 # Decorator to validate the user's guess
-def process_guess(func: Callable[["Game", str], str]) -> Callable[["Game", str], int]:
+def process_guess(func: Callable[["Game"], str]) -> Callable[["Game"], int]:
     """Decorator to validate the user's guess."""
 
-    def wrapper(self: "Game", *args: str, **kwargs: str) -> int:
+    def wrapper(self: "Game") -> int:
         """Wrapper function to check if the guess is valid and process it."""
         while True:
-            result: str = func(self, *args, **kwargs)
+            result: str = func(self)
             if valid_guess(result):
                 self.guesses += 1
                 return int(result)
             if result in EXIT_COMMANDS:
-                self.exit()
+                self.end()
             if result in RESTART_COMMANDS:
                 self.prompt_replay(continue_play=True)
                 return 0
@@ -54,12 +57,15 @@ def process_guess(func: Callable[["Game", str], str]) -> Callable[["Game", str],
 
 
 class Game:
+    """A class representing a guessing game."""
+
     def __init__(self) -> None:
         """Initialize the game."""
         clear_terminal()
         self.guesses: int = 0
         self.max_attempts: int = self.assign_max_attempts()
         self.target_number: int = self.get_target_number()
+        self.user_guess: int = TARGET_RANGE[0] - 1  # Initialize to an invalid guess
         self.main()
 
     def main(self) -> None:
@@ -69,14 +75,14 @@ class Game:
 
     def play(self) -> None:
         """Play the game."""
-        self.user_guess = self.get_user_guess("")
         while not self.correct_guess:
-            self.user_guess = self.get_user_guess("")
+            self.user_guess = self.get_user_guess()
             self.provide_feedback()
 
             if self.correct_guess:
                 self.declare_victory()
                 return
+
             if self.max_guess_limit:
                 self.reached_guess_limit()
                 return
@@ -85,11 +91,14 @@ class Game:
         """Display the welcome message and instructions."""
         print(_term.bold_cyan_on_blue("### Welcome To The Guessing Game !! ###"))
         target_range = " and ".join(map(str, TARGET_RANGE))
+
         print(
             _term.white(
                 f"  Guess a number between {target_range} (or enter 'exit' to quit)"
             )
         )
+
+        print(_term.cyan(f"Max attempts: {self.max_attempts}! Ready your guesses~\n"))
 
     def assign_max_attempts(self) -> int:
         """Assign the maximum number of guesses based on the target range."""
@@ -102,16 +111,13 @@ class Game:
         target_number = (
             randbelow(TARGET_RANGE[1] - TARGET_RANGE[0] + 1) + TARGET_RANGE[0]
         )
-        print(_term.cyan("Target number generated! Ready your guesses~\n"))
         return target_number
 
     @process_guess
-    def get_user_guess(self, prefix: str = "") -> str:
+    def get_user_guess(self) -> str:
         """Prompt the user for a guess and return it."""
         guesses = _term.white(str(self.guesses + 1))
-        user_guess = input(
-            prefix + _term.yellow_bold(f"[{guesses}] Enter your guess: ")
-        )
+        user_guess = input(_term.yellow_bold(f"[{guesses}] Enter your guess: "))
         return user_guess
 
     @property
@@ -142,7 +148,7 @@ class Game:
         """Inform the user that they have reached the maximum number of guesses."""
         print(
             _term.bright_red(
-                f"\nYou reached the max guesses limit ({self.max_attempts})!"
+                f"You reached the max guesses limit ({self.max_attempts})!"
             )
         )
         print(_term.bright_red(f"The target number was: {self.target_number}!"))
@@ -150,7 +156,7 @@ class Game:
 
     def declare_victory(self) -> None:
         """Congratulate the user for guessing correctly."""
-        print(_term.bold_green("\n VICTORY! You guessed correctly!! "))
+        print(_term.bold_green("\nVICTORY! You guessed correctly!!"))
         plural = "" if self.guesses == 1 else "es"
         print(_term.green_italic(f"Took {self.guesses} guess{plural}."))
         self.prompt_replay()
@@ -160,17 +166,15 @@ class Game:
         if input(_term.magenta_bold("Replay? (y/n) [y]: ")).lower() in ("y", ""):
             return Game()
         if continue_play:
-            self.get_user_guess("\n")
+            self.get_user_guess()
             return None
-        self.exit()
+        self.end()
         return None
 
-    def exit(self) -> None:
+    def end(self) -> None:
         """Exit the game."""
         print(_term.bright_blue("\n( ﾉ ﾟｰﾟ)ﾉ bye\n"))
-        from sys import exit
-
-        exit()
+        sys.exit(0)
 
 
 if __name__ == "__main__":
